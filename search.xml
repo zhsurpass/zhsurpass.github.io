@@ -31,33 +31,6 @@
     
     
     <entry>
-      <title>Test aliyun-oss-zh</title>
-      <link href="/2022/05/02/%E6%B5%8B%E8%AF%95/"/>
-      <url>/2022/05/02/%E6%B5%8B%E8%AF%95/</url>
-      
-        <content type="html"><![CDATA[<p>测试</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;Hello World!&quot;</span> &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><hr><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">.file&quot;gotodiff_se.c&quot;</span><br><span class="line">.text</span><br><span class="line">.globlgotodiff_se</span><br><span class="line">.typegotodiff_se, @function</span><br><span class="line">gotodiff_se:</span><br><span class="line">.LFB0:</span><br><span class="line">.cfi_startproc</span><br><span class="line">endbr64</span><br><span class="line">movq%rdi, %rax</span><br><span class="line">cmpq%rsi, %rdi</span><br><span class="line">jge.L4</span><br><span class="line">addq$1, lt_cnt(%rip)</span><br><span class="line">subq%rdi, %rsi</span><br><span class="line">movq%rsi, %rax</span><br><span class="line">ret</span><br><span class="line">.L4:</span><br><span class="line">addq$1, ge_cnt(%rip)</span><br><span class="line">subq%rsi, %rax</span><br><span class="line">ret</span><br><span class="line">.cfi_endproc</span><br><span class="line">.LFE0:</span><br><span class="line">.sizegotodiff_se, .-gotodiff_se</span><br><span class="line">.globlge_cnt</span><br><span class="line">.bss</span><br><span class="line">.align 8</span><br><span class="line">.typege_cnt, @object</span><br><span class="line">.sizege_cnt, 8</span><br><span class="line">ge_cnt:</span><br><span class="line">.zero8</span><br><span class="line">.globllt_cnt</span><br><span class="line">.align 8</span><br><span class="line">.typelt_cnt, @object</span><br><span class="line">.sizelt_cnt, 8</span><br><span class="line">lt_cnt:</span><br><span class="line">.zero8</span><br><span class="line">.ident&quot;GCC: (Ubuntu 9.3.0-10ubuntu2) 9.3.0&quot;</span><br><span class="line">.section.note.GNU-stack,&quot;&quot;,@progbits</span><br><span class="line">.section.note.gnu.property,&quot;a&quot;</span><br><span class="line">.align 8</span><br><span class="line">.long 1f - 0f</span><br><span class="line">.long 4f - 1f</span><br><span class="line">.long 5</span><br><span class="line">0:</span><br><span class="line">.string &quot;GNU&quot;</span><br><span class="line">1:</span><br><span class="line">.align 8</span><br><span class="line">.long 0xc0000002</span><br><span class="line">.long 3f - 2f</span><br><span class="line">2:</span><br><span class="line">.long 0x3</span><br><span class="line">3:</span><br><span class="line">.align 8</span><br><span class="line">4:</span><br><span class="line"></span><br></pre></td></tr></table></figure><p>测试aliyun-oss-zh访问及速度</p><p><img src="https://aliyun-oss-zh.oss-cn-beijing.aliyuncs.com/img/owl1.jpg" alt="owl1"></p><p><img src="https://aliyun-oss-zh.oss-cn-beijing.aliyuncs.com/img/fox1.jpg" alt="fox1"></p>]]></content>
-      
-      
-      <categories>
-          
-          <category> C++ </category>
-          
-          <category> 侯捷 面向对象高级编程 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> C++ </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>Hello World</title>
       <link href="/2022/05/01/hello-world/"/>
       <url>/2022/05/01/hello-world/</url>

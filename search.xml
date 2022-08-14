@@ -4,6 +4,35 @@
   
     
     <entry>
+      <title>CMU15-213 Lecture15 Linking</title>
+      <link href="/2022/08/14/CMU15-213-15Linking/"/>
+      <url>/2022/08/14/CMU15-213-15Linking/</url>
+      
+        <content type="html"><![CDATA[<p>本节课主要通过研究学习链接的处理来探索系统是如何构建（<em>build</em>）程序的。</p><p><img src="https://aliyun-oss-zh.oss-cn-beijing.aliyuncs.com/img/QQ%E6%88%AA%E5%9B%BE20220814012301.jpg" alt=""></p><p>先来看一个简答的程序，该程序由两部分源文件组成<code>main.c</code>和<code>sum.c</code>。像<code>sum.c</code>中这样返回退出状态<code>return val;</code>是一件很奇怪的事情，这么做知识为了让编译器不会优化掉所有代码。</p><p><img src="https://aliyun-oss-zh.oss-cn-beijing.aliyuncs.com/img/QQ%E6%88%AA%E5%9B%BE20220814012821.jpg" alt=""></p><p>现在看看编译这两个模块代码时会发生什么，对于<code>main.c</code>和<code>sum.c</code>中的每个源文件，GCC在这些<code>.c</code>文件上调用一系列<code>Translator</code>翻译器。它首先调用C预处理器<code>C preprocessor</code>，即<code>cpp</code>；然后它调用实际的编译器<code>cc1</code>，编译器生成汇编代码，然后由汇编器<code>as</code>翻译并生成一个名为<code>main.o</code>的<code>.o</code>可重定位目标程序，对于<code>sum.c</code>来说也是一样的流程。</p><p>源代码在经过这三个<code>translator</code>翻译器处理之后就得到了两个<code>.o</code>类型的目标文件，链接器获取那些<code>.o</code>文件并将它们链接在一起，最后形成一个可以运行的单个可执行文件。然后用户就可以将该可执行程序<code>prog</code>加载和运行在系统上。</p><p><code>main.c</code>和<code>sum.c</code>是源文件，这些<code>.o</code>文件是单独编译的目标文件，也称为可重定位目标文件，因为它们可以组合起来形成一个完全链接的可执行目标文件。</p><h2 id="why-linkers？">Why Linkers？</h2><p><img src="https://aliyun-oss-zh.oss-cn-beijing.aliyuncs.com/img/QQ%E6%88%AA%E5%9B%BE20220814224156.jpg" alt=""><br><img src="https://aliyun-oss-zh.oss-cn-beijing.aliyuncs.com/img/QQ%E6%88%AA%E5%9B%BE20220814224658.jpg" alt=""></p><p>为什么允许这种所谓的单独编译？为何不将所有代码都包含在一个大文件中，原因主要有以下几点：</p><ol><li>模块化——模块化可以将庞大的代码分解成更小更精简的代码模块，可以将相关的函数放入单独的源文件中，可以定义函数库；</li><li>效率——如果程序分解成多个模块，更改其中一个模块时就不必重新编译所有其它项目，可以只重新编译修改的那个模块，然后将它们再次链接在一起，这样在时间和空间上都更具效率。如果需要使用C标准库中的所有函数，可以将它们全部放在一个文件里，但是实际编译并链接到程序中的那些函数才是实际要调用的函数，因此可以更节省空间。程序员通常只使用标准C函数的一小部分，因此将所有那些不使用的函数链接到实际代码中是没有意义的。</li></ol><h2 id="what-do-linkers-do？">What Do Linkers Do？</h2><p><img src="https://aliyun-oss-zh.oss-cn-beijing.aliyuncs.com/img/QQ%E6%88%AA%E5%9B%BE20220814225914.jpg" alt=""></p><p><img src="https://aliyun-oss-zh.oss-cn-beijing.aliyuncs.com/img/QQ%E6%88%AA%E5%9B%BE20220814231539.jpg" alt=""></p><p><img src="https://aliyun-oss-zh.oss-cn-beijing.aliyuncs.com/img/QQ%E6%88%AA%E5%9B%BE20220814231617.jpg" alt=""></p><p>链接器主要执行两个任务：</p><ol><li><p>符号解析（<em>symbol resolution</em>）——程序会定义和引用符号（<em>symbol</em>），这里链接器所指的符号包括全局变量和函数。<code>void swap()&#123;...&#125;</code>这里定义了一个叫<code>swap</code>的符号，这样当调用<code>swap();</code>时就会指向/引用该符号。<code>int *xp = &amp;x;</code>定义了一个指向<code>int</code>类型的指针<code>xp</code>，如此就定义了<code>xp</code>并将其初始化为变量<code>x</code>的地址，即一个指向<code>x</code>的引用。</p><p>所有这些符号定义都会被汇编器存储在一个目标文件中，在符号表（<em>symbol table</em>）中，它是一个结构体数组，其中每个结构体都包含相关符号的信息，例如符号的名称、大小和位置。符号解析是指链接器在进行链接过程中，将每个符号引用（<em>symbol reference</em>）与一个对应的符号定义（<em>symbol definition</em>）相关联。这样存在一个问题，就像在多个模块中可以声明具有相同名称的全局变量，而链接器必须判别将这些符号定义中的哪一个用于后续的符号引用。</p></li><li><p>重定向（<em>relacation</em>）——当链接器为每个符号引用关联一个唯一的符号定义后，会进行第二步重定向，在重定向过程中它会将所有模块合并到一个可执行的目标模块中，该模块可以直接在系统上加载并执行。因此在它进行合并时必须清楚每个符号也即每个函数和变量将被存储在哪里，这就是重定向。因为最初函数只是存储在它们各自目标文件（<code>.o</code>文件）模块中的某个偏移量处，由于链接器并不知道这些函数最终将被加载到内存的何处，在重定向之前，目标文件模块中函数的地址仅是它在该目标模块中的偏移量，对于数据也是如此。在重定向这一步，链接器会决定程序执行时每个符号最终被加载到内存的位置，并将这些绝对位置和符号绑定到一起，然后它会查看对这些符号的所有引用并更新这些引用，使得它们现在指向正确的地址。</p></li></ol><h2 id="three-kinds-of-object-files-modules">Three kinds of Object Files (Modules)</h2><p><img src="https://aliyun-oss-zh.oss-cn-beijing.aliyuncs.com/img/QQ%E6%88%AA%E5%9B%BE20220814233056.jpg" alt=""></p><p>目标文件模块有三种类型：</p><ol><li><code>.o</code>文件——它称为可重定位目标模块，是汇编程序输出的一个二进制文件，但是它无法被直接加载到内存，需要经过链接器的操作才能实际使用</li><li><code>a.out</code>文件——由链接器生成的可执行目标文件称为<code>a.out</code>文件（Linux平台）</li><li><code>.so</code>文件——另一种类型的目标文件称为共享目标文件或<code>.so</code>文件，这是一种创建共享库的现代技术</li></ol><h2 id="executable-and-linkable-format-elf">Executable and Linkable Format (ELF)</h2><p><img src="https://aliyun-oss-zh.oss-cn-beijing.aliyuncs.com/img/QQ%E6%88%AA%E5%9B%BE20220814234013.jpg" alt=""></p><p>目标模块采用称为ELF的标准格式，它是<code>.o</code>可重定位文件、<code>.out</code>可执行目标文件和<code>.so</code>共享目标文件的统一格式。</p><p><img src="https://aliyun-oss-zh.oss-cn-beijing.aliyuncs.com/img/QQ%E6%88%AA%E5%9B%BE20220814234452.jpg" alt=""></p><p><img src="https://aliyun-oss-zh.oss-cn-beijing.aliyuncs.com/img/QQ%E6%88%AA%E5%9B%BE20220815001154.jpg" alt=""></p><p>这些ELF二进制文件非常地结构化，它分为以下几个部分：</p><ol><li><code>ELF header</code>——其中包括字长、字节序、文件类型等内容信息，无论是<code>.o</code>、<code>.out</code>还是<code>.so</code>都包含ELF header，它提供一些关于该二进制文件的概括信息</li><li><code>Segment header table</code>——它只为可执行目标文件而定义，用来指明代码的所有不同segment（段）将在内存中的位置，指明stack在哪里，共享库在哪里，以及初始化和未初始化的数据应该放在哪里，代码应该放在哪里……所有这些不同的部分均在segment header table中定义</li><li>.<code>text</code>部分——<code>.text</code>一直用来指代代码</li><li>.<code>rodata</code>部分——<code>.rodata</code>全称为read only data，例如<code>switch</code>语句中的跳转表。<code>.text</code>和<code>.rodata</code>都是只读属性的，无法对它们进行写操作</li><li><code>.data</code>部分——这块空间用来包含所有已初始化的全局变量</li><li><code>.bss</code>部分——它定义了未初始化的全局变量。这实际上并不占用<code>.o</code>文件的任何空间，因为它们都是未初始化的，但符号表中有它们的相关条目，当程序被加载时，实际上必须要为这些变量分配空间、</li><li><code>.symtab</code>——它就是符号表，实际是一个结构体数组，包含用于过程（函数）、全局变量和任何静态属性定义的东西，它们在符号表中都有一个对应的条目。</li><li><code>.rel</code>部分——<code>.rel .text</code>和<code>.rel .data</code>它们包含了重定位信息，可以将它们视为笔记，当链接器去识别所有对符号的引用时，它在其中放置了一点笔记，用于实际创建可执行文件时修复对这个符号的引用。一个重定位条目就相当于一则笔记，汇编器提示链接器必须要修复这个引用，因为汇编器不知道这个符号加载至内存时会被实际存储在内存中哪块位置</li><li><code>.debug</code>部分——它其中包含将源代码中的行号与机器代码中的行号相关联的信息，它称为<code>.debug</code>因为是使用<code>-g</code>编译选项编译时得到的结果</li><li><code>section header table</code>——通过它可以知道不同<code>section</code>的起始位置</li></ol><h2 id="linker-symbols">Linker Symbols</h2><p><img src="https://aliyun-oss-zh.oss-cn-beijing.aliyuncs.com/img/QQ%E6%88%AA%E5%9B%BE20220815001642.jpg" alt=""></p><p>对于链接器有三种不同的符号：</p><ol><li>全局符号——全局符号定义在某个模块<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex">m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">m</span></span></span></span>中，它们可以被其它模块使用</li></ol>]]></content>
+      
+      
+      <categories>
+          
+          <category> 公开课 </category>
+          
+          <category> CMU15-213 Introduction to Computer Systems (ICS) </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> CMU15-213 </tag>
+            
+            <tag> CSAPP </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>2面向对象设计原则</title>
       <link href="/2022/08/12/Boolan-C++%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-2%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/"/>
       <url>/2022/08/12/Boolan-C++%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-2%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/</url>
